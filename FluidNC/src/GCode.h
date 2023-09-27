@@ -3,6 +3,8 @@
 // Copyright (c) 2018 -	Bart Dring
 // Use of this source code is governed by a GPLv3 license that can be found in the LICENSE file.
 
+// This file has been modified to allow for RapidChange ATC to support M61 for setting the current tool.
+
 #pragma once
 
 #include "Config.h"
@@ -36,7 +38,7 @@ enum class ModalGroup : uint8_t {
     MG12 = 9,   // [G54,G55,G56,G57,G58,G59] Coordinate system selection
     MG13 = 10,  // [G61] Control mode
     MM4  = 11,  // [M0,M1,M2,M30] Stopping
-    MM6  = 14,  // [M6] Tool change
+    MM6  = 14,  // [M6] Tool change, [M61] Set current tool (RapidChange ATC)
     MM7  = 12,  // [M3,M4,M5] Spindle turning
     MM8  = 13,  // [M7,M8,M9] Coolant control
     MM9  = 14,  // [M56] Override control
@@ -170,9 +172,12 @@ enum class ToolLengthOffset : uint8_t {
 
 static const uint32_t MaxToolNumber = 99999999;
 
+// This enum is extended for RapidChange ATC to support M61
 enum class ToolChange : uint8_t {
     Disable = 0,
     Enable  = 1,
+    // For M61
+    Select = 2,
 };
 
 // Modal Group G12: Active work coordinate system
@@ -311,3 +316,6 @@ void gc_sync_position();
 
 void user_tool_change(uint32_t new_tool);
 void user_m30();
+
+// RapidChange ATC addition for setting current tool
+void user_select_tool(uint32_t new_tool);

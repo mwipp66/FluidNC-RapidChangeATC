@@ -2,6 +2,8 @@
 // Copyright (c) 2021 -  Mitch Bradley
 // Use of this source code is governed by a GPLv3 license that can be found in the LICENSE file.
 
+// This file has been modified to allow for configuration of RapidChange ATC
+
 #pragma once
 
 #include "../Assert.h"
@@ -26,6 +28,9 @@
 #include "I2SOBus.h"
 #include "UserOutputs.h"
 #include "Macros.h"
+
+// RapidChange ATC addition
+#include "../Custom/RapidChange.h"
 
 #include <string_view>
 
@@ -75,6 +80,9 @@ namespace Machine {
         Parking*              _parking        = nullptr;
         OLED*                 _oled           = nullptr;
         Spindles::SpindleList _spindles;
+
+        // RapidChange ATC addition
+        RapidChange::RapidChange*    _rapidChange = nullptr;
 
         UartChannel* _uart_channels[MAX_N_UARTS] = { nullptr };
         Uart*        _uarts[MAX_N_UARTS]         = { nullptr };

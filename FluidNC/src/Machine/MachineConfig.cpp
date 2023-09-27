@@ -2,6 +2,8 @@
 // Copyright (c) 2021 -  Mitch Bradley
 // Use of this source code is governed by a GPLv3 license that can be found in the LICENSE file.
 
+// This file has been modified to allow for configuration of RapidChange ATC
+
 #include "MachineConfig.h"
 
 #include "../Kinematics/Kinematics.h"
@@ -66,6 +68,9 @@ namespace Machine {
         handler.section("user_outputs", _userOutputs);
 
         handler.section("oled", _oled);
+
+        // RapidChange ATC section
+        handler.section("RapidChange", _rapidChange);
 
         Spindles::SpindleFactory::factory(handler, _spindles);
 
@@ -145,6 +150,11 @@ namespace Machine {
 
         if (_macros == nullptr) {
             _macros = new Macros();
+        }
+
+        // RapidChange ATC init
+        if (_rapidChange == nullptr) {
+            _rapidChange = new RapidChange::RapidChange();
         }
     }
 
@@ -270,5 +280,8 @@ namespace Machine {
         delete _spi;
         delete _control;
         delete _macros;
+
+        // RapidChange ATC cleanup
+        delete _rapidChange;
     }
 }
