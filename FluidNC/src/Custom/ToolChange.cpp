@@ -295,7 +295,12 @@ void set_tool() {
     execute_linef(true, "G38.2 G91 F%d Z%5.3f", rapid_change->_seek_feed_rate, -1 * rapid_change->_set_tool_max_travel);
     execute_linef(true, "G91 G0 Z%d", rapid_change->_seek_retreat);
     execute_linef(true, "G38.2 G91 F%d Z%5.3f", rapid_change->_set_feed_rate, -1 * (rapid_change->_seek_retreat + 2));
-    execute_linef(true, "G10 L20 P0 Z%5.3f", rapid_change->_set_tool_offset);
+
+    float* m_pos = get_mpos();
+    float m_pos_z = m_pos[Z_AXIS];
+    float tlo = 0.0f - m_pos_z;
+    execute_linef(false, "G43.1 Z%5.3f", tlo);
+    //execute_linef(true, "G10 L20 P0 Z%5.3f", rapid_change->_set_tool_offset);
     execute_linef(true, "G90 G0");
 
     // And rise all the way because we are done
