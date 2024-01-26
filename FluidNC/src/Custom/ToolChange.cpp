@@ -299,6 +299,7 @@ void set_tool() {
     float* m_pos = get_mpos();
     float m_pos_z = m_pos[Z_AXIS];
     float tlo = 0.0f - m_pos_z;
+    
     execute_linef(false, "G43.1 Z%5.3f", tlo);
     //execute_linef(true, "G10 L20 P0 Z%5.3f", rapid_change->_set_tool_offset);
     execute_linef(true, "G90 G0");
