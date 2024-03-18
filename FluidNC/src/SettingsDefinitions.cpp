@@ -13,6 +13,10 @@ IntSetting* sd_fallback_cs;
 
 EnumSetting* message_level;
 
+IntSetting* current_tool;
+
+StringSetting* current_tlo;
+
 enum_opt_t messageLevels = {
     // clang-format off
     { "None", MsgLevelNone },
