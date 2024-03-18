@@ -21,9 +21,9 @@ void user_tool_change(uint32_t new_tool) {
     set_tool();
     open_dust_cover(false);
 
-    if (current_tool != 0) {
-        execute_linef(true, "G53 G0 G90 X%5.3f Y%5.3f", origin_mpos[0], origin_mpos[1]);
-    }
+    // if (current_tool != 0) {
+    //     execute_linef(true, "G53 G0 G90 X%5.3f Y%5.3f", origin_mpos[0], origin_mpos[1]);
+    // }
     
     restore_program_state();
         
@@ -117,9 +117,9 @@ void record_program_state() {
     stored_state.feed_rate_mode = gc_state.modal.feed_rate;
     stored_state.units = gc_state.modal.units;
 
-    float* current_mpos = get_mpos();
-    origin_mpos[0] = current_mpos[X_AXIS];
-    origin_mpos[1] = current_mpos[Y_AXIS];
+    // float* current_mpos = get_mpos();
+    // origin_mpos[0] = current_mpos[X_AXIS];
+    // origin_mpos[1] = current_mpos[Y_AXIS];
 }
 
 void restore_program_state() {
@@ -128,9 +128,9 @@ void restore_program_state() {
     } else if (stored_state.coolant.Mist == 1) {
         execute_linef(false, "M7");
     }
-    if (stored_state.distance == Distance::Incremental) {
-        execute_linef(false, "G91");
-    }
+    // if (stored_state.distance == Distance::Incremental) {
+    //     execute_linef(false, "G91");
+    // }
     if (stored_state.feed_rate_mode == FeedRate::InverseTime) {
         execute_linef(false, "G93");
     }
@@ -314,7 +314,7 @@ bool spindle_has_tool() {
 
 void user_M30() {
     // TODO: call user_tool_change? this doesn't work
-    if (current_tool != 0) {
-        execute_linef(true, "M6 T0");
-    }
+    // if (current_tool != 0) {
+    //     execute_linef(true, "M6 T0");
+    // }
 }
