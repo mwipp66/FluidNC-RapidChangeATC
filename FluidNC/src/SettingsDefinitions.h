@@ -13,3 +13,9 @@ extern IntSetting* status_mask;
 extern IntSetting* sd_fallback_cs;
 
 extern EnumSetting* message_level;
+
+// Current tool persistance modification
+extern IntSetting* current_tool;
+
+// Current tool length offset persistance modification
+extern StringSetting* current_tlo;

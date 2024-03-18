@@ -64,4 +64,10 @@ void make_settings() {
 
     start_message =
         new StringSetting("Message issued at startup", EXTENDED, WG, NULL, "Start/Message", "Grbl \\V [FluidNC \\B (\\R) \\H]", 0, 40, NULL);
+
+    // Tool persistance setting modification
+    current_tool = new IntSetting("Current tool in spindle", EXTENDED, WG, NULL, "Current/Tool", 0, 0, 255, NULL, false);
+
+    // TLO persistance setting modification
+    current_tlo = new StringSetting("Current tool in spindle", EXTENDED, WG, NULL, "Current/TLO", "0", 1, 10, NULL);
 }
