@@ -10,11 +10,11 @@ namespace Machine {
 
     int Stepping::_engine = RMT;
 
-    EnumItem stepTypes[] = { { Stepping::TIMED, "Timed" },
-                             { Stepping::RMT, "RMT" },
-                             { Stepping::I2S_STATIC, "I2S_static" },
-                             { Stepping::I2S_STREAM, "I2S_stream" },
-                             EnumItem(Stepping::RMT) };
+    const EnumItem stepTypes[] = { { Stepping::TIMED, "Timed" },
+                                   { Stepping::RMT, "RMT" },
+                                   { Stepping::I2S_STATIC, "I2S_static" },
+                                   { Stepping::I2S_STREAM, "I2S_stream" },
+                                   EnumItem(Stepping::RMT) };
 
     void Stepping::init() {
         log_info("Stepping:" << stepTypes[_engine].name << " Pulse:" << _pulseUsecs << "us Dsbl Delay:" << _disableDelayUsecs
@@ -138,7 +138,7 @@ namespace Machine {
         handler.item("idle_ms", _idleMsecs, 0, 10000000);  // full range
         handler.item("pulse_us", _pulseUsecs, 0, 30);
         handler.item("dir_delay_us", _directionDelayUsecs, 0, 10);
-        handler.item("disable_delay_us", _disableDelayUsecs, 0, 10);
+        handler.item("disable_delay_us", _disableDelayUsecs, 0, 1000000);  // max 1 second
         handler.item("segments", _segments, 6, 20);
     }
 

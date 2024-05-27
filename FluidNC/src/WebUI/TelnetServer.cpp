@@ -16,7 +16,7 @@ namespace WebUI {
 
 #    include "WifiConfig.h"
 #    include "../Report.h"  // report_init_message()
-#    include "Commands.h"  // COMMANDS
+#    include "Commands.h"   // COMMANDS
 
 #    include <WiFi.h>
 
@@ -26,10 +26,10 @@ namespace WebUI {
     IntSetting*  telnet_port;
 
     TelnetServer::TelnetServer() {
-        telnet_port = new IntSetting(
-            "Telnet Port", WEBSET, WA, "ESP131", "Telnet/Port", DEFAULT_TELNETSERVER_PORT, MIN_TELNET_PORT, MAX_TELNET_PORT, NULL);
+        telnet_port =
+            new IntSetting("Telnet Port", WEBSET, WA, "ESP131", "Telnet/Port", DEFAULT_TELNETSERVER_PORT, MIN_TELNET_PORT, MAX_TELNET_PORT);
 
-        telnet_enable = new EnumSetting("Telnet Enable", WEBSET, WA, "ESP130", "Telnet/Enable", DEFAULT_TELNET_STATE, &onoffOptions, NULL);
+        telnet_enable = new EnumSetting("Telnet Enable", WEBSET, WA, "ESP130", "Telnet/Enable", DEFAULT_TELNET_STATE, &onoffOptions);
     }
 
     bool TelnetServer::begin() {
@@ -50,7 +50,7 @@ namespace WebUI {
         _setupdone = true;
 
         //add mDNS
-        if (WebUI::wifi_sta_ssdp->get() == SSDP_ENABLED) {
+        if (WebUI::wifi_sta_ssdp->get()) {
             MDNS.addService("telnet", "tcp", _port);
         }
 

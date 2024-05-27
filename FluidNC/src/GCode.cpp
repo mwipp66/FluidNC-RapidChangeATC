@@ -1417,7 +1417,7 @@ Error gc_execute_line(char* line) {
     pl_data->feed_rate = gc_state.feed_rate;  // Record data for planner use.
     // [4. Set spindle speed ]:
     if ((gc_state.spindle_speed != gc_block.values.s) || syncLaser) {
-        if (gc_state.modal.spindle != SpindleState::Disable && !laserIsMotion && sys.state != State::CheckMode) {
+        if (gc_state.modal.spindle != SpindleState::Disable && !laserIsMotion && !state_is(State::CheckMode)) {
             protocol_buffer_synchronize();
             spindle->setState(gc_state.modal.spindle, disableLaser ? 0 : (uint32_t)gc_block.values.s);
             report_ovr_counter = 0;  // Set to report change immediately
@@ -1443,7 +1443,7 @@ Error gc_execute_line(char* line) {
         // Update spindle control and apply spindle speed when enabling it in this block.
         // NOTE: All spindle state changes are synced, even in laser mode. Also, pl_data,
         // rather than gc_state, is used to manage laser state for non-laser motions.
-        if (sys.state != State::CheckMode) {
+        if (!state_is(State::CheckMode)) {
             protocol_buffer_synchronize();
             spindle->setState(gc_block.modal.spindle, (uint32_t)pl_data->spindle_speed);
         }
@@ -1471,7 +1471,7 @@ Error gc_execute_line(char* line) {
                 gc_state.modal.coolant = {};
                 break;
         }
-        if (sys.state != State::CheckMode) {
+        if (!state_is(State::CheckMode)) {
             protocol_buffer_synchronize();
             config->_coolant->set_state(gc_state.modal.coolant);
             report_ovr_counter = 0;  // Set to report change immediately
@@ -1654,7 +1654,7 @@ Error gc_execute_line(char* line) {
             break;
         case ProgramFlow::Paused:
             protocol_buffer_synchronize();  // Sync and finish all remaining buffered motions before moving on.
-            if (sys.state != State::CheckMode) {
+            if (!state_is(State::CheckMode)) {
                 protocol_send_event(&feedHoldEvent);
                 protocol_execute_realtime();  // Execute suspend.
             }
@@ -1691,7 +1691,7 @@ Error gc_execute_line(char* line) {
             }
 
             // Execute coordinate change and spindle/coolant stop.
-            if (sys.state != State::CheckMode) {
+            if (!state_is(State::CheckMode)) {
                 coords[gc_state.modal.coord_select]->get(gc_state.coord_system);
                 gc_wco_changed();  // Set to refresh immediately just in case something altered.
                 spindle->spinDown();

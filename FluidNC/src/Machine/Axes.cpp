@@ -8,7 +8,7 @@
 #include "MachineConfig.h"  // config->
 #include "../Limits.h"
 
-EnumItem axisType[] = { { 0, "X" }, { 1, "Y" }, { 2, "Z" }, { 3, "A" }, { 4, "B" }, { 5, "C" }, EnumItem(0) };
+const EnumItem axisType[] = { { 0, "X" }, { 1, "Y" }, { 2, "Z" }, { 3, "A" }, { 4, "B" }, { 5, "C" }, EnumItem(0) };
 
 namespace Machine {
     MotorMask Axes::posLimitMask = 0;
@@ -17,6 +17,8 @@ namespace Machine {
     MotorMask Axes::motorMask    = 0;
 
     AxisMask Axes::homingMask = 0;
+
+    bool Axes::disabled = false;
 
     Axes::Axes() : _axis() {
         for (int i = 0; i < MAX_N_AXIS; ++i) {
@@ -57,6 +59,8 @@ namespace Machine {
                 m->_driver->set_disable(disable);
             }
         }
+        if (disable)  // any disable, !disable does not change anything here
+            disabled = true;
     }
 
     void IRAM_ATTR Axes::set_disable(bool disable) {
@@ -65,6 +69,13 @@ namespace Machine {
         }
 
         _sharedStepperDisable.synchronousWrite(disable);
+
+        if (!disable && disabled) {
+            disabled = false;
+            if (config->_stepping->_disableDelayUsecs) {  // wait for the enable delay
+                delay_us(config->_stepping->_disableDelayUsecs);
+            }
+        }
     }
 
     // Put the motors in the given axes into homing mode, returning a
@@ -190,6 +201,7 @@ namespace Machine {
     void Axes::group(Configuration::HandlerBase& handler) {
         handler.item("shared_stepper_disable_pin", _sharedStepperDisable);
         handler.item("shared_stepper_reset_pin", _sharedStepperReset);
+        handler.item("homing_runs", _homing_runs, 1, 5);
 
         // Handle axis names xyzabc.  handler.section is inferred
         // from a template.
@@ -258,9 +270,25 @@ namespace Machine {
         return retval;
     }
 
+    MotorMask Axes::hardLimitMask() {
+        MotorMask mask = 0;
+        for (int axis = 0; axis < _numberAxis; ++axis) {
+            auto a = _axis[axis];
+
+            for (int motor = 0; motor < Axis::MAX_MOTORS_PER_AXIS; ++motor) {
+                auto m = a->_motors[motor];
+                if (m && m->_hardLimits) {
+                    set_bitnum(mask, axis);
+                }
+            }
+        }
+        return mask;
+    }
+
     bool Axes::namesToMask(const char* names, AxisMask& mask) {
         bool retval = true;
-        for (int i = 0; i < strlen(names); i++) {
+        const auto lenNames = strlen(names);
+        for (int i = 0; i < lenNames; i++) {
             char  axisName = toupper(names[i]);
             char* pos      = index(_names, axisName);
             if (!pos) {

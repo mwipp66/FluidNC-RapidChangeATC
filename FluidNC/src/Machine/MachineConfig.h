@@ -22,6 +22,7 @@
 #include "../Stepper.h"
 #include "../Config.h"
 #include "../OLED.h"
+#include "../Status_outputs.h"
 #include "Axes.h"
 #include "SPIBus.h"
 #include "I2CBus.h"
@@ -46,7 +47,7 @@ namespace Machine {
         // to ensure they are not already active. If so, and hard
         // limits are enabled, Alarm state will be entered instead of
         // Idle and the user will be told to check the limits.
-        bool _checkLimits = false;
+        bool _checkLimits = true;
 
     public:
         Start() {}
@@ -79,6 +80,7 @@ namespace Machine {
         Start*                _start          = nullptr;
         Parking*              _parking        = nullptr;
         OLED*                 _oled           = nullptr;
+        Status_Outputs*       _stat_out       = nullptr;
         Spindles::SpindleList _spindles;
 
         // RapidChange ATC addition
@@ -89,7 +91,7 @@ namespace Machine {
 
         float _arcTolerance      = 0.002f;
         float _junctionDeviation = 0.01f;
-        bool  _verboseErrors     = false;
+        bool  _verboseErrors     = true;
         bool  _reportInches      = false;
 
         size_t _planner_blocks = 16;
@@ -116,9 +118,9 @@ namespace Machine {
         void afterParse() override;
         void group(Configuration::HandlerBase& handler) override;
 
-        static bool load();
-        static bool load_file(std::string_view file);
-        static bool load_yaml(std::string_view yaml_string);
+        static void load();
+        static void load_file(std::string_view file);
+        static void load_yaml(std::string_view yaml_string);
 
         ~MachineConfig();
     };
